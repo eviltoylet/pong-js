@@ -7,6 +7,18 @@
     var paddleHeight = 50;
 
     var gameWindow = document.getElementById("gameWindow");
+
+    // TODO: Figure out how to get this to animate smoothly to the new location
+    var processKeyboardInput = function (e) {
+        if (e.code === "ArrowDown") {
+            playerOne.y += 5;
+        } else if (e.code === "ArrowUp") {
+            playerOne.y -= 5;
+        }
+    };
+
+    window.addEventListener("keydown", processKeyboardInput, false);
+
     var canvas = {
         height: parseInt(gameWindow.getAttribute("height")),
         width: parseInt(gameWindow.getAttribute("width"))
@@ -29,7 +41,6 @@
         ball.radius = 6;
     };
 
-
     Game.initialize = function () {
         playerOne.score = 0;
         playerOne.x = offsetFromEdge;
@@ -46,16 +57,44 @@
         ball.x += ball.velocity.x;
         ball.y += ball.velocity.y;
 
-        if (ball.x < 0) {
+        if (ball.x - ball.radius < 0) {
             playerTwo.score++;
             resetBall();
-        } else if (ball.x > canvas.width) {
+        } else if (ball.x + ball.radius > canvas.width) {
             playerOne.score++;
             resetBall();
         } else {
             if (ball.y - ball.radius < 0 || canvas.height < ball.y - ball.radius) {
                 ball.velocity.y *= -1;
             }
+        }
+
+        if (ball.x <= playerOne.x + paddleWidth / 2 && ball.x >= playerOne.x - paddleWidth / 2) {
+            if (ball.y >= playerOne.y - paddleHeight / 2 && ball.y <= playerOne.y + paddleHeight / 2) {
+                // player one hit
+                ball.velocity.x *= -1;
+            }
+        } else if (ball.x >= playerTwo.x - paddleWidth / 2 && ball.x <= playerTwo.x + paddleWidth / 2) {
+            if (ball.y >= playerTwo.y - paddleHeight / 2 && ball.y <= playerTwo.y + paddleHeight / 2) {
+                // player two hit
+                ball.velocity.x *= -1;
+            }
+        }
+
+        if (playerOne.y + paddleHeight / 2 > canvas.height) {
+            playerOne.y = canvas.height - paddleHeight / 2;
+        }
+
+        if (playerTwo.y + paddleHeight / 2 > canvas.height) {
+            playerTwo.y = canvas.height - paddleHeight / 2;
+        }
+
+        if (playerOne.y - paddleHeight / 2 < 0) {
+            playerOne.y = paddleHeight / 2;
+        }
+
+        if (playerTwo.y - paddleHeight < 0) {
+            playerTwo.y = paddleHeight / 2;
         }
     };
 
