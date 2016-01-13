@@ -5,23 +5,40 @@
     var paddleColor = "white";
     var paddleWidth = 10;
     var paddleHeight = 50;
+    var playerSpeed = 200;
 
     var gameWindow = document.getElementById("gameWindow");
 
-    // TODO: Figure out how to get this to animate smoothly to the new location
     var processKeyboardInput = function (e) {
-        if (e.code === "ArrowDown") {
-            playerOne.y += 5;
-        } else if (e.code === "ArrowUp") {
-            playerOne.y -= 5;
+        if (e.type == "keydown") {
+            if (e.code === "ArrowDown") {
+                playerOne.velocity.y = playerSpeed;
+            } else if (e.code === "ArrowUp") {
+                playerOne.velocity.y = -playerSpeed;
+            }
+        } else if (e.type == "keyup") {
+            if (e.code === "ArrowDown") {
+                if (playerOne.velocity.y > 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "ArrowUp") {
+                if (playerOne.velocity.y < 0) {
+                    playerOne.velocity.y = 0;
+                }
+            }
         }
     };
 
     window.addEventListener("keydown", processKeyboardInput, false);
+    window.addEventListener("keyup", processKeyboardInput, false);
 
     var canvas = {
         height: parseInt(gameWindow.getAttribute("height")),
         width: parseInt(gameWindow.getAttribute("width"))
+    };
+
+    var randomBoolean = function () {
+        return Math.random() < 0.5;
     };
 
     var offsetFromEdge = 20;
@@ -34,9 +51,12 @@
         ball.x = canvas.width / 2;
         ball.y = canvas.height / 2;
         ball.color = "white";
+
+        var absoluteX = Math.random() * 200 + 100;
+        var absoluteY = Math.random() * 300;
         ball.velocity = {
-            x: Math.random() * 10 - 5,
-            y: Math.random() * 10 - 5
+            x: randomBoolean() ? absoluteX : -1 * absoluteX,
+            y: randomBoolean() ? absoluteY : -1 * absoluteY
         };
         ball.radius = 6;
     };
@@ -45,17 +65,31 @@
         playerOne.score = 0;
         playerOne.x = offsetFromEdge;
         playerOne.y = canvas.height / 2;
+        playerOne.velocity = {
+            x: 0,
+            y: 0
+        };
 
         playerTwo.score = 0;
         playerTwo.x = canvas.width - offsetFromEdge;
         playerTwo.y = canvas.height / 2;
+        playerTwo.velocity = {
+            x: 0,
+            y: 0
+        };
 
         resetBall();
     };
 
+    var lastUpdate = window.performance.now();
     Game.update = function () {
-        ball.x += ball.velocity.x;
-        ball.y += ball.velocity.y;
+        var now = window.performance.now();
+        var timePassed = now - lastUpdate;
+        lastUpdate = now;
+        var multiplier = timePassed / 1000;
+
+        ball.x += ball.velocity.x * multiplier;
+        ball.y += ball.velocity.y * multiplier;
 
         if (ball.x - ball.radius < 0) {
             playerTwo.score++;
@@ -80,6 +114,9 @@
                 ball.velocity.x *= -1;
             }
         }
+
+        playerOne.y += playerOne.velocity.y * multiplier;
+        playerTwo.y += playerTwo.velocity.y * multiplier;
 
         if (playerOne.y + paddleHeight / 2 > canvas.height) {
             playerOne.y = canvas.height - paddleHeight / 2;
@@ -122,10 +159,11 @@
     };
 
     Game.run = function () {
+        window.requestAnimationFrame(Game.run);
         Game.update();
         Game.render();
     };
 
     Game.initialize();
-    setInterval(Game.run, 16);
+    Game.run();
 })();
