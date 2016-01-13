@@ -1,24 +1,36 @@
 (function () {
-    var targetFps = 60;
     var Game = {};
 
     var backgroundColor = "black";
     var paddleColor = "white";
     var paddleWidth = 10;
     var paddleHeight = 50;
+    var playerSpeed = 200;
 
     var gameWindow = document.getElementById("gameWindow");
 
-    // TODO: Figure out how to get this to animate smoothly to the new location
     var processKeyboardInput = function (e) {
-        if (e.code === "ArrowDown") {
-            playerOne.y += 10;
-        } else if (e.code === "ArrowUp") {
-            playerOne.y -= 10;
+        if (e.type == "keydown") {
+            if (e.code === "ArrowDown") {
+                playerOne.velocity.y = playerSpeed;
+            } else if (e.code === "ArrowUp") {
+                playerOne.velocity.y = -playerSpeed;
+            }
+        } else if (e.type == "keyup") {
+            if (e.code === "ArrowDown") {
+                if (playerOne.velocity.y > 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "ArrowUp") {
+                if (playerOne.velocity.y < 0) {
+                    playerOne.velocity.y = 0;
+                }
+            }
         }
     };
 
     window.addEventListener("keydown", processKeyboardInput, false);
+    window.addEventListener("keyup", processKeyboardInput, false);
 
     var canvas = {
         height: parseInt(gameWindow.getAttribute("height")),
@@ -53,10 +65,18 @@
         playerOne.score = 0;
         playerOne.x = offsetFromEdge;
         playerOne.y = canvas.height / 2;
+        playerOne.velocity = {
+            x: 0,
+            y: 0
+        };
 
         playerTwo.score = 0;
         playerTwo.x = canvas.width - offsetFromEdge;
         playerTwo.y = canvas.height / 2;
+        playerTwo.velocity = {
+            x: 0,
+            y: 0
+        };
 
         resetBall();
     };
@@ -94,6 +114,9 @@
                 ball.velocity.x *= -1;
             }
         }
+
+        playerOne.y += playerOne.velocity.y * multiplier;
+        playerTwo.y += playerTwo.velocity.y * multiplier;
 
         if (playerOne.y + paddleHeight / 2 > canvas.height) {
             playerOne.y = canvas.height - paddleHeight / 2;
