@@ -61,9 +61,9 @@
         resetBall();
     };
 
-    var lastUpdate = Date.now();
+    var lastUpdate = window.performance.now();
     Game.update = function () {
-        var now = Date.now();
+        var now = window.performance.now();
         var timePassed = now - lastUpdate;
         lastUpdate = now;
         var multiplier = timePassed / 1000;
@@ -136,10 +136,11 @@
     };
 
     Game.run = function () {
+        window.requestAnimationFrame(Game.run);
         Game.update();
         Game.render();
     };
 
     Game.initialize();
-    setInterval(Game.run, 1000 / targetFps);
+    Game.run();
 })();
