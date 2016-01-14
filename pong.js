@@ -9,6 +9,7 @@
 
     var gameWindow = document.getElementById("gameWindow");
 
+
     var processKeyboardInput = function (e) {
         if (e.type == "keydown") {
             if (e.code === "ArrowDown") {
@@ -17,20 +18,30 @@
                 playerOne.velocity.y = -playerSpeed;
             }
         } else if (e.type == "keyup") {
-            if (e.code === "ArrowDown") {
-                if (playerOne.velocity.y > 0) {
-                    playerOne.velocity.y = 0;
-                }
-            } else if (e.code === "ArrowUp") {
-                if (playerOne.velocity.y < 0) {
-                    playerOne.velocity.y = 0;
-                }
+            if (e.code === "ArrowDown" || e.code === "ArrowUp") {
+                playerOne.velocity.y = 0;
             }
         }
     };
 
+    var touchStart = function (e) {
+        e.preventDefault();
+        if (e.touches[0].clientY < 480 / 2) {
+            playerOne.velocity.y = -playerSpeed;
+        } else {
+            playerOne.velocity.y = playerSpeed;
+        }
+    };
+
+    var touchEnd = function (e) {
+        e.preventDefault();
+        playerOne.velocity.y = 0;
+    };
+
     window.addEventListener("keydown", processKeyboardInput, false);
     window.addEventListener("keyup", processKeyboardInput, false);
+    gameWindow.addEventListener("touchstart", touchStart, false);
+    gameWindow.addEventListener("touchend", touchEnd, false);
 
     var canvas = {
         height: parseInt(gameWindow.getAttribute("height")),
