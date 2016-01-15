@@ -18,8 +18,16 @@
                 playerOne.velocity.y = -playerSpeed;
             }
         } else if (e.type == "keyup") {
-            if (e.code === "ArrowDown" || e.code === "ArrowUp") {
-                playerOne.velocity.y = 0;
+            if (e.code === "ArrowDown") {
+                if (playerOne.velocity.y > 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "ArrowUp") {
+                if (playerOne.velocity.y < 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "KeyR") {
+                Game.initialize();
             }
         }
     };
