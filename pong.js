@@ -18,8 +18,16 @@
                 playerOne.velocity.y = -playerSpeed;
             }
         } else if (e.type == "keyup") {
-            if (e.code === "ArrowDown" || e.code === "ArrowUp") {
-                playerOne.velocity.y = 0;
+            if (e.code === "ArrowDown") {
+                if (playerOne.velocity.y > 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "ArrowUp") {
+                if (playerOne.velocity.y < 0) {
+                    playerOne.velocity.y = 0;
+                }
+            } else if (e.code === "KeyR") {
+                Game.initialize();
             }
         }
     };
@@ -97,7 +105,8 @@
         var now = window.performance.now();
         var timePassed = now - lastUpdate;
         lastUpdate = now;
-        var multiplier = timePassed / 1000;
+        var multiplier = timePassed / 1000.;
+        Game.framesPerSecond = Math.round(1000 / timePassed);
 
         ball.x += ball.velocity.x * multiplier;
         ball.y += ball.velocity.y * multiplier;
@@ -167,6 +176,10 @@
         context.font = "24px courier";
         context.textAlign = "center";
         context.fillText(scoreString, canvas.width / 2, 30);
+
+        context.font = "10px courier";
+        context.textAlign = "end";
+        context.fillText("FPS: " + Game.framesPerSecond, canvas.width, canvas.height);
     };
 
     Game.run = function () {
