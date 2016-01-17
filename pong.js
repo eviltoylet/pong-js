@@ -102,6 +102,14 @@
 
     var lastUpdate = window.performance.now();
     Game.update = function () {
+        var updatePlayerTwo = function () {
+            if (randomBoolean()) {
+                var ballDirection = ball.velocity.y < 0 ? -1 : 1;
+                playerTwo.velocity.y = playerSpeed * ballDirection;
+            }
+        };
+        updatePlayerTwo();
+
         var now = window.performance.now();
         var timePassed = now - lastUpdate;
         lastUpdate = now;
@@ -150,7 +158,7 @@
             playerOne.y = paddleHeight / 2;
         }
 
-        if (playerTwo.y - paddleHeight < 0) {
+        if (playerTwo.y - paddleHeight / 2 < 0) {
             playerTwo.y = paddleHeight / 2;
         }
     };
