@@ -9,7 +9,6 @@
 
     var gameWindow = document.getElementById("gameWindow");
 
-
     var processKeyboardInput = function (e) {
         if (e.type == "keydown") {
             if (e.code === "ArrowDown") {
@@ -34,7 +33,7 @@
 
     var touchStart = function (e) {
         e.preventDefault();
-        if (e.touches[0].clientY < 480 / 2) {
+        if (e.touches[0].clientY < canvas.height / 2) {
             playerOne.velocity.y = -playerSpeed;
         } else {
             playerOne.velocity.y = playerSpeed;
@@ -181,7 +180,7 @@
         context.fill();
 
         var scoreString = playerOne.score + " : " + playerTwo.score;
-        context.font = "24px courier";
+        context.font = "30px courier";
         context.textAlign = "center";
         context.fillText(scoreString, canvas.width / 2, 30);
 
