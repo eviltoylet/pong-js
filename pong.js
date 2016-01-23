@@ -9,7 +9,6 @@
 
     var gameWindow = document.getElementById("gameWindow");
 
-
     var processKeyboardInput = function (e) {
         if (e.type == "keydown") {
             if (e.code === "ArrowDown") {
@@ -34,7 +33,7 @@
 
     var touchStart = function (e) {
         e.preventDefault();
-        if (e.touches[0].clientY < 480 / 2) {
+        if (e.touches[0].clientY < canvas.height / 2) {
             playerOne.velocity.y = -playerSpeed;
         } else {
             playerOne.velocity.y = playerSpeed;
@@ -80,7 +79,9 @@
         ball.radius = 6;
     };
 
-    Game.initialize = function () {
+    Game.initialize = function (ai) {
+        Game.ai = ai;
+
         playerOne.score = 0;
         playerOne.x = offsetFromEdge;
         playerOne.y = canvas.height / 2;
@@ -102,13 +103,7 @@
 
     var lastUpdate = window.performance.now();
     Game.update = function () {
-        var updatePlayerTwo = function () {
-            if (randomBoolean()) {
-                var ballDirection = ball.velocity.y < 0 ? -1 : 1;
-                playerTwo.velocity.y = playerSpeed * ballDirection;
-            }
-        };
-        updatePlayerTwo();
+        Game.ai(playerTwo, playerOne, ball);
 
         var now = window.performance.now();
         var timePassed = now - lastUpdate;
@@ -134,12 +129,12 @@
         if (ball.x <= playerOne.x + paddleWidth / 2 && ball.x >= playerOne.x - paddleWidth / 2) {
             if (ball.y >= playerOne.y - paddleHeight / 2 && ball.y <= playerOne.y + paddleHeight / 2) {
                 // player one hit
-                ball.velocity.x *= -1;
+                ball.velocity.x *= -(1 + Math.random());
             }
         } else if (ball.x >= playerTwo.x - paddleWidth / 2 && ball.x <= playerTwo.x + paddleWidth / 2) {
             if (ball.y >= playerTwo.y - paddleHeight / 2 && ball.y <= playerTwo.y + paddleHeight / 2) {
                 // player two hit
-                ball.velocity.x *= -1;
+                ball.velocity.x *= -(1 + Math.random());
             }
         }
 
@@ -181,7 +176,7 @@
         context.fill();
 
         var scoreString = playerOne.score + " : " + playerTwo.score;
-        context.font = "24px courier";
+        context.font = "30px courier";
         context.textAlign = "center";
         context.fillText(scoreString, canvas.width / 2, 30);
 
@@ -196,6 +191,13 @@
         Game.render();
     };
 
-    Game.initialize();
+    var simpleAi = function (self, opponent, ball) {
+        if (randomBoolean()) {
+            var ballDirection = ball.velocity.y < 0 ? -1 : 1;
+            self.velocity.y = playerSpeed * ballDirection;
+        }
+    };
+
+    Game.initialize(simpleAi);
     Game.run();
 })();
