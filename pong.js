@@ -79,7 +79,9 @@
         ball.radius = 6;
     };
 
-    Game.initialize = function () {
+    Game.initialize = function (ai) {
+        Game.ai = ai;
+
         playerOne.score = 0;
         playerOne.x = offsetFromEdge;
         playerOne.y = canvas.height / 2;
@@ -101,13 +103,7 @@
 
     var lastUpdate = window.performance.now();
     Game.update = function () {
-        var updatePlayerTwo = function () {
-            if (randomBoolean()) {
-                var ballDirection = ball.velocity.y < 0 ? -1 : 1;
-                playerTwo.velocity.y = playerSpeed * ballDirection;
-            }
-        };
-        updatePlayerTwo();
+        Game.ai(playerTwo, playerOne, ball);
 
         var now = window.performance.now();
         var timePassed = now - lastUpdate;
@@ -195,6 +191,13 @@
         Game.render();
     };
 
-    Game.initialize();
+    var simpleAi = function (self, opponent, ball) {
+        if (randomBoolean()) {
+            var ballDirection = ball.velocity.y < 0 ? -1 : 1;
+            self.velocity.y = playerSpeed * ballDirection;
+        }
+    };
+
+    Game.initialize(simpleAi);
     Game.run();
 })();
