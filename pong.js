@@ -133,12 +133,12 @@
         if (ball.x <= playerOne.x + paddleWidth / 2 && ball.x >= playerOne.x - paddleWidth / 2) {
             if (ball.y >= playerOne.y - paddleHeight / 2 && ball.y <= playerOne.y + paddleHeight / 2) {
                 // player one hit
-                ball.velocity.x *= -1;
+                ball.velocity.x *= -(1 + Math.random());
             }
         } else if (ball.x >= playerTwo.x - paddleWidth / 2 && ball.x <= playerTwo.x + paddleWidth / 2) {
             if (ball.y >= playerTwo.y - paddleHeight / 2 && ball.y <= playerTwo.y + paddleHeight / 2) {
                 // player two hit
-                ball.velocity.x *= -1;
+                ball.velocity.x *= -(1 + Math.random());
             }
         }
 
