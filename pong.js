@@ -1,7 +1,6 @@
 (function () {
     var Game = {};
 
-    var backgroundColor = "black";
     var paddleColor = "white";
     var paddleWidth = 10;
     var paddleHeight = 50;
@@ -114,7 +113,6 @@
         ball.x += ball.velocity.x * multiplier;
         ball.y += ball.velocity.y * multiplier;
 
-        // TODO: Add logic to prevent high velocity balls from jumping over the paddle
         if (ball.x - ball.radius < 0) {
             playerTwo.score++;
             resetBall();
@@ -124,11 +122,6 @@
         } else {
             if (ball.y - ball.radius < 0 || canvas.height < ball.y - ball.radius) {
                 ball.velocity.y *= -1;
-                if (ball.y - ball.radius < 0) {
-                    ball.y = ball.radius;
-                } else if (ball.y - ball.radius > canvas.height) {
-                    ball.y = canvas.height - ball.radius;
-                }
             }
         }
 
@@ -167,7 +160,8 @@
     Game.render = function () {
         var context = gameWindow.getContext("2d");
 
-        context.fillStyle = backgroundColor;
+        // TODO: Find better way to do movement trails
+        context.fillStyle = 'rgba(0,0,0,0.3)';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         context.fillStyle = paddleColor;
@@ -197,17 +191,18 @@
         Game.render();
     };
 
-    var perfectAi = function (self, opponent, ball) {
+    var ai = {};
+    ai.perfect = function (self, opponent, ball) {
         self.y = ball.y;
     };
 
-    var simpleAi = function (self, opponent, ball) {
+    ai.simple = function (self, opponent, ball) {
         if (randomBoolean()) {
             var ballDirection = ball.velocity.y < 0 ? -1 : 1;
             self.velocity.y = playerSpeed * ballDirection;
         }
     };
 
-    Game.initialize(simpleAi);
+    Game.initialize(ai.simple);
     Game.run();
 })();
