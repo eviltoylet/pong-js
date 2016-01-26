@@ -1,7 +1,6 @@
 (function () {
     var Game = {};
 
-    var backgroundColor = "black";
     var paddleColor = "white";
     var paddleWidth = 10;
     var paddleHeight = 50;
@@ -161,7 +160,8 @@
     Game.render = function () {
         var context = gameWindow.getContext("2d");
 
-        context.fillStyle = backgroundColor;
+        // TODO: Find better way to do movement trails
+        context.fillStyle = 'rgba(0,0,0,0.3)';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         context.fillStyle = paddleColor;
@@ -191,13 +191,18 @@
         Game.render();
     };
 
-    var simpleAi = function (self, opponent, ball) {
+    var ai = {};
+    ai.perfect = function (self, opponent, ball) {
+        self.y = ball.y;
+    };
+
+    ai.simple = function (self, opponent, ball) {
         if (randomBoolean()) {
             var ballDirection = ball.velocity.y < 0 ? -1 : 1;
             self.velocity.y = playerSpeed * ballDirection;
         }
     };
 
-    Game.initialize(simpleAi);
+    Game.initialize(ai.simple);
     Game.run();
 })();
